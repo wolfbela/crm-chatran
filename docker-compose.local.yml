@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  webapp:
+    build:
+      context: ./webapp
+      dockerfile: ../docker/Dockerfile
+    container_name: webapp-local
+    environment:
+      - POSTGRES_HOST=192.168.56.10
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=webapp
+      - POSTGRES_USER=lama
+      - POSTGRES_PASSWORD=JaimeLesChevaux
+      - NODE_ENV=development
+      - NEXT_PUBLIC_APP_URL=http://localhost:3000
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./webapp:/app
+      - /app/node_modules
+      - /app/.next
+    networks:
+      - webapp-network
+    restart: unless-stopped
+    depends_on:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.webapp-local.rule=Host(`localhost`) || Host(`webapp.local`)"
+      - "traefik.http.routers.webapp-local.entrypoints=web"
+      - "traefik.http.services.webapp-local.loadbalancer.server.port=3000"
+
+  traefik:
+    image: traefik:v3.0
+    container_name: webapp-traefik-local
+    command:
+      - "--api.dashboard=true"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--global.checknewversion=false"
+      - "--global.sendanonymoususage=false"
+    ports:
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - webapp-network
+    restart: unless-stopped
+
+networks:
+  webapp-network:
+    driver: bridge
