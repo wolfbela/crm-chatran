@@ -9,6 +9,22 @@ interface Database {
     created_at: Date;
     updated_at: Date;
   };
+  personnes: {
+    id: string;
+    name: string;
+    age: number;
+    religious_level: number;
+    center_of_interest: string[];
+    created_at: Date;
+    updated_at: Date;
+  };
+  meetings: {
+    id: number;
+    personne_1: string;
+    personne_2: string;
+    date: Date;
+    created_at: Date;
+  };
 }
 
 const createDialect = () => {
