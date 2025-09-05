@@ -1,29 +1,29 @@
-import { Kysely, PostgresDialect } from "kysely";
+import { Kysely, PostgresDialect, Generated } from "kysely";
 import { Pool } from "pg";
 
 interface Database {
   users: {
-    id: number;
+    id: Generated<number>;
     email: string;
     name: string;
-    created_at: Date;
-    updated_at: Date;
+    created_at: Generated<Date>;
+    updated_at: Generated<Date>;
   };
   personnes: {
-    id: string;
+    id: Generated<string>;
     name: string;
     age: number;
     religious_level: number;
     center_of_interest: string[];
-    created_at: Date;
-    updated_at: Date;
+    created_at: Generated<Date>;
+    updated_at: Generated<Date>;
   };
   meetings: {
-    id: number;
+    id: Generated<number>;
     personne_1: string;
     personne_2: string;
     date: Date;
-    created_at: Date;
+    created_at: Generated<Date>;
   };
 }
 
