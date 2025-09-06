@@ -5,6 +5,8 @@ import { format } from "date-fns";
 interface MeetingCardProps {
   meeting: {
     id: number;
+    personne_1: string;
+    personne_2: string;
     date: Date;
     personne_1_name: string | null;
     personne_2_name: string | null;

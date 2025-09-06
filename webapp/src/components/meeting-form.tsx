@@ -10,18 +10,26 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { DatePicker } from "@/components/ui/date-picker";
-import { createMeeting } from "@/lib/actions";
+import { createMeeting, updateMeeting } from "@/lib/actions";
 
 interface MeetingFormProps {
   personnes: Array<{
     id: string;
     name: string;
   }>;
+  meeting?: {
+    id: number;
+    personne_1: string;
+    personne_2: string;
+    date: Date;
+  };
   onClose: () => void;
 }
 
-export function MeetingForm({ personnes, onClose }: MeetingFormProps) {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>();
+export function MeetingForm({ personnes, meeting, onClose }: MeetingFormProps) {
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
+    meeting ? new Date(meeting.date) : undefined,
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (formData: FormData) => {
@@ -33,7 +41,11 @@ export function MeetingForm({ personnes, onClose }: MeetingFormProps) {
     formData.set("date", selectedDate.toISOString());
 
     try {
-      await createMeeting(formData);
+      if (meeting) {
+        await updateMeeting(meeting.id, formData);
+      } else {
+        await createMeeting(formData);
+      }
       onClose();
     } catch {
       // Error will be handled by the UI
@@ -52,7 +64,7 @@ export function MeetingForm({ personnes, onClose }: MeetingFormProps) {
           >
             Première personne
           </label>
-          <Select name="personne_1" required>
+          <Select name="personne_1" required defaultValue={meeting?.personne_1}>
             <SelectTrigger>
               <SelectValue placeholder="Sélectionner une personne" />
             </SelectTrigger>
@@ -73,7 +85,7 @@ export function MeetingForm({ personnes, onClose }: MeetingFormProps) {
           >
             Deuxième personne
           </label>
-          <Select name="personne_2" required>
+          <Select name="personne_2" required defaultValue={meeting?.personne_2}>
             <SelectTrigger>
               <SelectValue placeholder="Sélectionner une personne" />
             </SelectTrigger>
@@ -104,7 +116,7 @@ export function MeetingForm({ personnes, onClose }: MeetingFormProps) {
           Annuler
         </Button>
         <Button type="submit" disabled={isSubmitting || !selectedDate}>
-          {isSubmitting ? "..." : "Ajouter"}
+          {isSubmitting ? "..." : meeting ? "Modifier" : "Ajouter"}
         </Button>
       </div>
     </form>

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { Insertable } from "kysely";
 import { db, Database } from "@/lib/database";
+import { MESSAGES } from "@/lib/constants";
 
 export async function createPersonne(formData: FormData) {
   const name = formData.get("name") as string;
@@ -11,7 +12,7 @@ export async function createPersonne(formData: FormData) {
   const interests = formData.get("interests") as string;
 
   if (!name || !age || !religious_level) {
-    throw new Error("Tous les champs requis doivent être remplis");
+    throw new Error(MESSAGES.ERROR.REQUIRED_FIELDS);
   }
 
   const center_of_interest = interests
@@ -32,7 +33,7 @@ export async function createPersonne(formData: FormData) {
     revalidatePath("/");
     return { success: true };
   } catch {
-    throw new Error("Erreur lors de la création de la personne");
+    throw new Error(MESSAGES.ERROR.PERSON_CREATE_ERROR);
   }
 }
 
@@ -43,7 +44,7 @@ export async function updatePersonne(id: string, formData: FormData) {
   const interests = formData.get("interests") as string;
 
   if (!name || !age || !religious_level) {
-    throw new Error("Tous les champs requis doivent être remplis");
+    throw new Error(MESSAGES.ERROR.REQUIRED_FIELDS);
   }
 
   const center_of_interest = interests
@@ -65,7 +66,18 @@ export async function updatePersonne(id: string, formData: FormData) {
     revalidatePath("/");
     return { success: true };
   } catch {
-    throw new Error("Erreur lors de la mise à jour de la personne");
+    throw new Error(MESSAGES.ERROR.PERSON_UPDATE_ERROR);
+  }
+}
+
+export async function deletePersonne(id: string) {
+  try {
+    await db.deleteFrom("personnes").where("id", "=", id).execute();
+    revalidatePath("/");
+    revalidatePath("/personnes");
+    return { success: true };
+  } catch {
+    throw new Error(MESSAGES.ERROR.PERSON_DELETE_ERROR);
   }
 }
 
@@ -75,11 +87,11 @@ export async function createMeeting(formData: FormData) {
   const date = formData.get("date") as string;
 
   if (!personne_1 || !personne_2 || !date) {
-    throw new Error("Tous les champs requis doivent être remplis");
+    throw new Error(MESSAGES.ERROR.REQUIRED_FIELDS);
   }
 
   if (personne_1 === personne_2) {
-    throw new Error("Les deux personnes doivent être différentes");
+    throw new Error(MESSAGES.ERROR.DIFFERENT_PERSONS);
   }
 
   try {
@@ -94,7 +106,49 @@ export async function createMeeting(formData: FormData) {
     revalidatePath("/");
     return { success: true };
   } catch {
-    throw new Error("Erreur lors de la création du meeting");
+    throw new Error(MESSAGES.ERROR.MEETING_CREATE_ERROR);
+  }
+}
+
+export async function updateMeeting(id: number, formData: FormData) {
+  const personne_1 = formData.get("personne_1") as string;
+  const personne_2 = formData.get("personne_2") as string;
+  const date = formData.get("date") as string;
+
+  if (!personne_1 || !personne_2 || !date) {
+    throw new Error(MESSAGES.ERROR.REQUIRED_FIELDS);
+  }
+
+  if (personne_1 === personne_2) {
+    throw new Error(MESSAGES.ERROR.DIFFERENT_PERSONS);
+  }
+
+  try {
+    await db
+      .updateTable("meetings")
+      .set({
+        personne_1,
+        personne_2,
+        date: new Date(date),
+      })
+      .where("id", "=", id)
+      .execute();
+
+    revalidatePath("/");
+    return { success: true };
+  } catch {
+    throw new Error(MESSAGES.ERROR.MEETING_UPDATE_ERROR);
+  }
+}
+
+export async function deleteMeeting(id: number) {
+  try {
+    await db.deleteFrom("meetings").where("id", "=", id).execute();
+    revalidatePath("/");
+    revalidatePath("/meetings");
+    return { success: true };
+  } catch {
+    throw new Error(MESSAGES.ERROR.MEETING_DELETE_ERROR);
   }
 }
 
@@ -118,6 +172,8 @@ export async function getMeetings() {
       .leftJoin("personnes as p2", "meetings.personne_2", "p2.id")
       .select([
         "meetings.id",
+        "meetings.personne_1",
+        "meetings.personne_2",
         "meetings.date",
         "meetings.created_at",
         "p1.name as personne_1_name",

@@ -16,12 +16,19 @@ interface MeetingDialogProps {
     id: string;
     name: string;
   }>;
+  meeting?: {
+    id: number;
+    personne_1: string;
+    personne_2: string;
+    date: Date;
+  };
   trigger: React.ReactNode;
   title: string;
 }
 
 export function MeetingDialog({
   personnes,
+  meeting,
   trigger,
   title,
 }: MeetingDialogProps) {
@@ -38,7 +45,11 @@ export function MeetingDialog({
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
-        <MeetingForm personnes={personnes} onClose={handleClose} />
+        <MeetingForm
+          personnes={personnes}
+          meeting={meeting}
+          onClose={handleClose}
+        />
       </DialogContent>
     </Dialog>
   );
