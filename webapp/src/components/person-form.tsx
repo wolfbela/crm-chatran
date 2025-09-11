@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { WhatsAppButton } from "@/components/whatsapp-button";
 import { createPersonne, updatePersonne } from "@/lib/actions";
 import { RELIGIOUS_LEVEL_LABELS } from "@/lib/constants";
 
@@ -21,6 +22,7 @@ interface PersonFormProps {
     age: number;
     religious_level: number;
     center_of_interest: string[];
+    phone?: string | null;
   };
   onClose: () => void;
 }
@@ -101,6 +103,19 @@ export function PersonForm({ person, onClose }: PersonFormProps) {
         </div>
 
         <div>
+          <label htmlFor="phone" className="block text-sm font-medium mb-2">
+            Téléphone
+          </label>
+          <Input
+            id="phone"
+            name="phone"
+            type="tel"
+            defaultValue={person?.phone || ""}
+            placeholder="+33123456789"
+          />
+        </div>
+
+        <div>
           <label
             htmlFor="religious_level"
             className="block text-sm font-medium mb-2"
@@ -159,13 +174,24 @@ export function PersonForm({ person, onClose }: PersonFormProps) {
         </div>
       </div>
 
-      <div className="flex justify-end space-x-2">
-        <Button type="button" variant="outline" onClick={onClose}>
-          Annuler
-        </Button>
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "..." : person ? "Modifier" : "Ajouter"}
-        </Button>
+      <div className="flex justify-between">
+        <div>
+          {person?.phone && (
+            <WhatsAppButton
+              phoneNumber={person.phone}
+              personName={person.name}
+              size="sm"
+            />
+          )}
+        </div>
+        <div className="flex space-x-2">
+          <Button type="button" variant="outline" onClick={onClose}>
+            Annuler
+          </Button>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "..." : person ? "Modifier" : "Ajouter"}
+          </Button>
+        </div>
       </div>
     </form>
   );

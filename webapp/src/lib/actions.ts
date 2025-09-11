@@ -9,6 +9,7 @@ export async function createPersonne(formData: FormData) {
   const name = formData.get("name") as string;
   const age = parseInt(formData.get("age") as string);
   const religious_level = parseInt(formData.get("religious_level") as string);
+  const phone = formData.get("phone") as string;
   const interests = formData.get("interests") as string;
 
   if (!name || !age || !religious_level) {
@@ -16,23 +17,24 @@ export async function createPersonne(formData: FormData) {
   }
 
   const center_of_interest = interests
-    ? interests.split(",").filter(Boolean)
+    ? interests.split(",").map((s) => s.trim())
     : [];
 
   try {
-    await db
-      .insertInto("personnes")
-      .values({
-        name,
-        age,
-        religious_level,
-        center_of_interest,
-      })
-      .execute();
+    const personData: Insertable<Database["personnes"]> = {
+      name,
+      age,
+      religious_level,
+      phone: phone || null,
+      center_of_interest,
+    };
+
+    await db.insertInto("personnes").values(personData).execute();
 
     revalidatePath("/");
     return { success: true };
-  } catch {
+  } catch (error) {
+    console.error("Error creating personne:", error);
     throw new Error(MESSAGES.ERROR.PERSON_CREATE_ERROR);
   }
 }
@@ -41,15 +43,15 @@ export async function updatePersonne(id: string, formData: FormData) {
   const name = formData.get("name") as string;
   const age = parseInt(formData.get("age") as string);
   const religious_level = parseInt(formData.get("religious_level") as string);
+  const phone = formData.get("phone") as string;
   const interests = formData.get("interests") as string;
+  const center_of_interest = interests
+    ? interests.split(",").map((s) => s.trim())
+    : [];
 
   if (!name || !age || !religious_level) {
     throw new Error(MESSAGES.ERROR.REQUIRED_FIELDS);
   }
-
-  const center_of_interest = interests
-    ? interests.split(",").filter(Boolean)
-    : [];
 
   try {
     await db
@@ -58,14 +60,17 @@ export async function updatePersonne(id: string, formData: FormData) {
         name,
         age,
         religious_level,
+        phone: phone || null,
         center_of_interest,
+        updated_at: new Date(),
       })
       .where("id", "=", id)
       .execute();
 
     revalidatePath("/");
     return { success: true };
-  } catch {
+  } catch (error) {
+    console.error("Error updating personne:", error);
     throw new Error(MESSAGES.ERROR.PERSON_UPDATE_ERROR);
   }
 }
@@ -159,7 +164,8 @@ export async function getPersonnes() {
       .selectAll()
       .orderBy("created_at", "desc")
       .execute();
-  } catch {
+  } catch (error) {
+    console.error("Error fetching personnes:", error);
     return [];
   }
 }

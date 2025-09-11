@@ -3,9 +3,13 @@ import { Pool } from "pg";
 
 interface Database {
   users: {
-    id: Generated<number>;
+    id: Generated<string>;
     email: string;
-    name: string;
+    password: string;
+    confirmed: Generated<boolean>;
+    reset_token?: string;
+    reset_token_expires?: Date;
+    confirmation_token?: string;
     created_at: Generated<Date>;
     updated_at: Generated<Date>;
   };
@@ -15,6 +19,7 @@ interface Database {
     age: number;
     religious_level: number;
     center_of_interest: string[];
+    phone: string | null;
     created_at: Generated<Date>;
     updated_at: Generated<Date>;
   };

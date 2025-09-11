@@ -17,6 +17,7 @@ interface PersonDialogProps {
     age: number;
     religious_level: number;
     center_of_interest: string[];
+    phone?: string | null;
   };
   trigger: React.ReactNode;
   title: string;
