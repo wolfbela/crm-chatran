@@ -1,6 +1,6 @@
 "use client";
 
-import { Trash2 } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -13,47 +13,42 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { deleteMeeting } from "@/lib/actions";
+import { logoutUser } from "@/lib/auth-actions";
 import { useTransition } from "react";
 
-interface DeleteMeetingButtonProps {
-  meetingId: number;
-  person1Name?: string | null;
-  person2Name?: string | null;
-}
-
-export function DeleteMeetingButton({
-  meetingId,
-  person1Name,
-  person2Name,
-}: DeleteMeetingButtonProps) {
+export function LogoutButton() {
   const [isPending, startTransition] = useTransition();
 
-  const handleDelete = () => {
+  const handleLogout = () => {
     startTransition(async () => {
-      await deleteMeeting(meetingId);
+      await logoutUser();
     });
   };
 
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="ghost" size="sm" disabled={isPending}>
-          <Trash2 className="h-4 w-4" />
+        <Button variant="outline" size="sm" disabled={isPending}>
+          <LogOut className="h-4 w-4 mr-2" />
+          Déconnexion
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
+          <AlertDialogTitle>Confirmer la déconnexion</AlertDialogTitle>
           <AlertDialogDescription>
-            Êtes-vous sûr de vouloir supprimer ce meeting entre {person1Name} et{" "}
-            {person2Name} ? Cette action est irréversible.
+            Êtes-vous sûr de vouloir vous déconnecter ? Vous devrez vous
+            reconnecter pour accéder à nouveau à votre compte.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Annuler</AlertDialogCancel>
-          <AlertDialogAction onClick={handleDelete} disabled={isPending}>
-            {isPending ? "Suppression..." : "Supprimer"}
+          <AlertDialogAction
+            onClick={handleLogout}
+            disabled={isPending}
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          >
+            {isPending ? "Déconnexion..." : "Se déconnecter"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

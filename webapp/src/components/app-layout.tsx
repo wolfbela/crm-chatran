@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LogoutButton } from "@/components/logout-button";
 import {
   Home,
   Users,
@@ -188,9 +189,13 @@ export function AppLayout({ children }: AppLayoutProps) {
           <SidebarTrigger className="-ml-1" />
           <div className="flex-1" />
           {user && (
-            <div className="text-sm text-muted-foreground">
-              Connecté en tant que {user.email}
-            </div>
+            <>
+              <div className="text-sm text-muted-foreground">
+                Connecté en tant que {user.email}
+              </div>
+              <div className="border-l border-border h-8 mx-2" />
+              <LogoutButton />
+            </>
           )}
         </header>
         <main className="flex-1">{children}</main>

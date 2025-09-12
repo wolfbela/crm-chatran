@@ -21,7 +21,10 @@ interface DeletePersonButtonProps {
   personName: string;
 }
 
-export function DeletePersonButton({ personId, personName }: DeletePersonButtonProps) {
+export function DeletePersonButton({
+  personId,
+  personName,
+}: DeletePersonButtonProps) {
   const [isPending, startTransition] = useTransition();
 
   const handleDelete = () => {
