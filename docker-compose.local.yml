@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   webapp:
@@ -14,6 +14,16 @@ services:
       - POSTGRES_PASSWORD=JaimeLesChevaux
       - NODE_ENV=development
       - NEXT_PUBLIC_APP_URL=http://localhost:3000
+      # Configuration Gmail
+      - SMTP_HOST=smtp.gmail.com
+      - SMTP_PORT=587
+      - SMTP_SECURE=false
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - SMTP_FROM=${SMTP_FROM}
+      - NEXT_PUBLIC_BASE_URL=http://localhost:3000
+      - SESSION_SECRET=${SESSION_SECRET}
+      - DATABASE_URL=sqlite:./dev.db
     ports:
       - "3000:3000"
     volumes:

@@ -111,6 +111,31 @@ export const AUTH_CONFIG = {
   SESSION_DURATION_DAYS: 30,
 } as const;
 
+export const SMTP_CONFIG = {
+  DEFAULTS: {
+    HOST: "localhost",
+    PORT: "587",
+    SECURE: "false",
+  },
+  PROVIDERS: {
+    GMAIL: {
+      HOST: "smtp.gmail.com",
+      PORT: 587,
+      SECURE: false,
+    },
+    OUTLOOK: {
+      HOST: "smtp-mail.outlook.com",
+      PORT: 587,
+      SECURE: false,
+    },
+    YAHOO: {
+      HOST: "smtp.mail.yahoo.com",
+      PORT: 587,
+      SECURE: false,
+    },
+  },
+} as const;
+
 export const EMAIL_CONFIG = {
   FROM_NAME: "Shidoukh App",
   SUBJECT: {

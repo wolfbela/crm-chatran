@@ -6,7 +6,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "WebApp",
+  title: "Chathan CRM",
   description: "Modern webapp with Next.js and PostgreSQL",
 };
 

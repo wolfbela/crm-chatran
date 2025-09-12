@@ -10,7 +10,10 @@
     "db:generate": "kysely-codegen",
     "db:migrate": "tsx migrate.ts",
     "db:migrate:up": "tsx migrate.ts up",
-    "db:migrate:down": "tsx migrate.ts down"
+    "db:migrate:down": "tsx migrate.ts down",
+    "test:email": "tsx test-email.ts",
+    "generate:secret": "tsx generate-secret.ts",
+    "setup:gmail": "tsx setup-gmail.ts"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.15",
